@@ -1,0 +1,15 @@
+lnfbvgwEVCHJEWB
+
+
+
+
+async function readFileAsync() {
+  try {
+    const data = await fs.readFile('test.txt', 'utf8');
+    console.log('File contents:', data);
+  } catch (error) {
+    console.error('Error reading file:', error);
+  }
+}
+
+readFileAsync();
