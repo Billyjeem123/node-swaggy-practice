@@ -1,29 +1,12 @@
-import { rejects } from "assert";
-import * as express from "express";
-import connectDB from './config/db';
 
-const app = express();
-const PORT = 3000;
+import { Server } from './server';
 
-app.use(express.json());
+let server = new Server().app;
+let port = 3000;
 
-// app.get('/', (req, res) => {
-//   res.send('<p>Hello from TypeScript and Express yes!</p>');
-// });
-
-// app.get('/api/user/login', (req, res) => {
-//   res.send('<p>Hello from   and Express yes!</p>');
-// });
-
-// app.post('/api/user/create', (req, res) => {
-//    const userData = req.body;
-//   res.status(200).json(userData);
-// });
-
-
-
-
-connectDB()
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+server.listen(port, () => {
+    console.log(`Server is running at port ${port}`);
 });
+
+
+

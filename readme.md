@@ -123,4 +123,38 @@ Keeps original data safe by creating new copies.
 🧩 What is Middleware?
 In simple terms:
 
-Middleware is a function that runs between when a request is received by the server and when a response is sent back.
+Middleware is a function that runs between when a request is received by the server and when a response is sent back.# node-swaggy-practice
+
+
+src/
+│
+├── config/              # Configuration (e.g., DB, environment, CORS)
+│   ├── db.ts
+│   └── env.ts
+│
+├── controllers/         # Handle HTTP requests/responses
+│   └── user.controller.ts
+│
+├── models/              # Mongoose or TypeORM models
+│   └── user.model.ts
+│
+├── routes/              # Define API routes
+│   └── user.routes.ts
+│
+├── middleware/          # Custom middleware (auth, error, logger, etc.)
+│   └── auth.middleware.ts
+│
+├── services/            # Business logic (separate from controller)
+│   └── user.service.ts
+│
+├── interfaces/          # TypeScript interfaces & types
+│   └── user.interface.ts
+│
+├── utils/               # Utility functions/helpers
+│   └── generateToken.ts
+│
+├── app.ts               # Express app setup
+├── server.ts            # Entry point (starts the server)
+└── types/               # Global TypeScript types
+    └── express.d.ts     # Extend Request/Response objects
+
