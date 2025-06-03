@@ -1,6 +1,7 @@
 import * as express from 'express'
 import connectDB from './config/db'
 import UserRoute from './routers/UserRoute'
+import * as bodyParser from 'body-parser';
 import { errorHandler } from './Exception/Handler'
 
 export class Server {
@@ -17,11 +18,18 @@ export class Server {
   
   setConfigs () {
    connectDB()
+     this.configureBodyParser();
   }
 
   setRoutes () {
     this.app.use('/api/user', UserRoute) //middleware to build router for routes
   }
+
+    configureBodyParser() {
+        this.app.use(bodyParser.urlencoded({
+            extended: true
+        }));
+    }
 
     error404Handler() {
         this.app.use((req, res) => {
