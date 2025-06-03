@@ -10,9 +10,7 @@ export class UserRouter {
   }
 
   getRoutes () {
-    this.router.get('/testing', UserController.login)
-
-
+    this.router.get('/create', UserController.login)
   }
 }
 
