@@ -10,7 +10,8 @@ export class UserRouter {
   }
 
   getRoutes () {
-    this.router.get('/create', UserController.login)
+     this.router.post('/create', UserController.signup.bind(UserController))
+    //  Use the login method, and when you use it, remember it belongs to UserController
   }
 }
 
