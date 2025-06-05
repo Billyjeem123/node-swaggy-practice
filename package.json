@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec ts-node src/index.ts",
-    "codes": "billycode"
+    "build": "tsc"
   },
   "author": "Billycodes",
   "license": "ISC",

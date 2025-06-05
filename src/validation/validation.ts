@@ -11,8 +11,7 @@ export class GlobalRequest {
     static signup() {
         return [
             body('name', 'Name is required').isString(),
-            body('email', 'Email is required').isEmail(),
-            body('password', 'Password is required').isLength({ min: 5 })
+            body('email', 'Email is required').isEmail()
             .custom((value, { req }) => {
                 if(req.body.email) return true;
                 else {

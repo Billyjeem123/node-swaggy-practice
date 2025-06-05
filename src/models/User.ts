@@ -4,6 +4,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IUser extends Document {
   name: string;
   email: string;
+  password: string;
 }
 
 // Define the Mongoose schema
@@ -16,6 +17,10 @@ const UserSchema: Schema = new Schema({
     type: String,
     required: true,
     unique: true, // ensures emails are not duplicated
+  },
+  password: {
+    type: String,
+    required: true,
   },
 }, {
   timestamps: true, // automatically adds createdAt and updatedAt

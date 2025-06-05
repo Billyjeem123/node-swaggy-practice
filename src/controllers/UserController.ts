@@ -1,20 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import UserModel from '../models/User'
-import { validationResult } from 'express-validator'
+import { handleValidationErrors } from '../Utility/validate';
 
 export class UserController {
   static async signup (req: Request, res: Response, next: NextFunction) {
     try {
 
-       const errors = validationResult(req)
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ success: false, errors: errors.array() })
-      }
+       if (handleValidationErrors(req, res)) return;
 
-      
-      const { email, name } = req.body
-
-     
+      const { email, name,password } = req.body
       // Check if user already exists
       const existingUser = await UserModel.findOne({ email })
 
@@ -27,7 +21,7 @@ export class UserController {
       }
 
       // Create a new user
-      const newUser = new UserModel({ name, email })
+      const newUser = new UserModel({ name, email,password })
       await newUser.save()
 
       res.status(201).json({

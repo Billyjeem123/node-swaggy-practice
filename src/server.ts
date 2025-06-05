@@ -25,9 +25,7 @@ export class Server {
 
 
 configureBodyParser () {
-  // Parse application/x-www-form-urlencoded (HTML form data)
   this.app.use(bodyParser.urlencoded({ extended: true }));
-  // Parse application/json (JSON data from frontend/API clients)
   this.app.use(bodyParser.json());
 }
 
