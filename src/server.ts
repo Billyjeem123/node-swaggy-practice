@@ -2,7 +2,7 @@ import * as express from 'express'
 import connectDB from './config/db'
 import UserRoute from './routers/UserRoute'
 import * as bodyParser from 'body-parser'
-import { errorHandler } from './Exception/Handler'
+import cors from 'cors';
 
 export class Server {
   public app = express()
@@ -16,6 +16,7 @@ export class Server {
 
   setConfigs () {
     connectDB()
+     this.allowCors();
     this.configureBodyParser()
   }
 
@@ -28,6 +29,11 @@ configureBodyParser () {
   this.app.use(bodyParser.urlencoded({ extended: true }));
   this.app.use(bodyParser.json());
 }
+
+ allowCors() {
+        this.app.use(cors());
+    }
+
 
 
   error404Handler () {
