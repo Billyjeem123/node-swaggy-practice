@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import UserModel from '../models/User'
 import { handleValidationErrors } from '../Utility/validate';
+import { UserResource } from '../Resource/UserResource';
 
 export class UserController {
   static async signup (req: Request, res: Response, next: NextFunction) {
@@ -16,7 +17,7 @@ export class UserController {
         return res.status(200).json({
           success: true,
           message: 'User already exists.',
-          data: existingUser
+          data: UserResource.toJson(existingUser)
         })
       }
 
@@ -27,7 +28,7 @@ export class UserController {
       res.status(201).json({
         success: true,
         message: 'User created successfully.',
-        data: newUser
+        data: UserResource.toJson(newUser)
       })
     } catch (error) {
       next(error) // let the global error handler catch it
