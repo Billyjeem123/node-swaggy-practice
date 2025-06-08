@@ -22,6 +22,6 @@ In your terminal, run:
 npm install mongoose
 npm install --save-dev @types/mongoose
 
-
+for sending mail use nodmailer 
 
 

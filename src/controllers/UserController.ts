@@ -1,16 +1,15 @@
 import { Request, Response, NextFunction } from 'express'
 import UserModel from '../models/User'
-import { genrerateOTP, handleValidationErrors } from '../Utility/validate';
-import { UserResource } from '../Resource/UserResource';
-import { sendMail } from '../Utility/mail';
+import { genrerateOTP, handleValidationErrors } from '../Utility/validate'
+import { UserResource } from '../Resource/UserResource'
+import { sendMail } from '../Utility/mail'
 
 export class UserController {
   static async signup (req: Request, res: Response, next: NextFunction) {
     try {
+      if (handleValidationErrors(req, res)) return
 
-       if (handleValidationErrors(req, res)) return;
-
-      const { email, name,password } = req.body
+      const { email, name, password } = req.body
       // Check if user already exists
       const existingUser = await UserModel.findOne({ email })
 
@@ -23,21 +22,22 @@ export class UserController {
       }
 
       // Create a new user
-      const otp = genrerateOTP(6);
-      const newUser = new UserModel({ name, email,password, otp  })
+      const otp = genrerateOTP()
+      console.log(otp)
+      const newUser = new UserModel({ name, email, password, otp })
       await newUser.save()
 
       // Send Email with OTP
       await sendMail({
-      to: email,
-      subject: 'Verify Your Email',
-      html: `
+        to: email,
+        subject: 'Verify Your Email',
+        html: `
         <h3>Hi ${name},</h3>
         <p>Thank you for signing up. Your OTP is:</p>
         <h2>${otp}</h2>
         <p>Please use it to verify your account.</p>
       `
-    });
+      })
 
       res.status(201).json({
         success: true,
