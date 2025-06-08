@@ -1,25 +1,31 @@
-import { body } from "express-validator";
+import { body } from 'express-validator'
+import UserModel from '../models/User'
 
 // This line imports the body function from the express-validator library.
 
 // body() is used to validate data in the request body (like req.body.name, req.body.email, etc.).
 
-
-
 export class GlobalRequest {
+  static signup () {
+    return [
+      body('name', 'Name is required').isString(),
+      body('email', 'Email is required')
+        .isEmail()
+        .custom((value, { req }) => {
+          if (req.body.email) return true
+          else {
+            throw new Error('Email is not available for validation')
+          }
+        })
+    ]
+  }
 
-    static signup() {
-        return [
-            body('name', 'Name is required').isString(),
-            body('email', 'Email is required').isEmail()
-            .custom((value, { req }) => {
-                if(req.body.email) return true;
-                else {
-                    throw new Error('Email is not available for validation');
-                }
-            }),
-        ]
-    }
+ static login() {
+    return [
+      body('email').isEmail().withMessage('A valid email is required'),
+      body('password').isString().withMessage('Password is required'),
+    ];
+  }
 }
 
 // 1️⃣ body('name', 'Name is required').isString()
@@ -28,7 +34,6 @@ export class GlobalRequest {
 // .isString() makes sure the value is a text string.
 
 // If it's missing or not a string, it shows the message: "Name is required".
-
 
 // This is a custom validation rule:
 

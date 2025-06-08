@@ -4,6 +4,8 @@ import { genrerateOTP, handleValidationErrors } from '../Utility/validate'
 import { UserResource } from '../Resource/UserResource'
 import { sendMail } from '../Utility/mail'
 import * as bcrypt from 'bcrypt';
+import  * as jwt from 'jsonwebtoken';
+import { getEnvironmentVariables } from '../enviroments/environment'
 
 export class UserController {
   
@@ -68,6 +70,49 @@ export class UserController {
       message: 'User created successfully.',
       data: UserResource.toJson(user),
     });
+  }
+
+
+   static async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (handleValidationErrors(req, res)) return;
+
+      const { email, password } = req.body;
+
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid credentials. User not found.',
+        });
+      }
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid credentials. Password mismatch.',
+        });
+      }
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          email: user.email,
+        },
+        getEnvironmentVariables().jwt_secret_key,
+        { expiresIn: '7d' }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: 'Login successful.',
+        data: {
+          user: UserResource.toJson(user),
+          token,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
   static async allusers (req: Request, res: Response, next: NextFunction) {
