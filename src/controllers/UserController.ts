@@ -5,48 +5,67 @@ import { UserResource } from '../Resource/UserResource'
 import { sendMail } from '../Utility/mail'
 
 export class UserController {
-  static async signup (req: Request, res: Response, next: NextFunction) {
+  
+
+  static async signup(req: Request, res: Response, next: NextFunction) {
     try {
-      if (handleValidationErrors(req, res)) return
+      if (handleValidationErrors(req, res)) return;
 
-      const { email, name, password } = req.body
-      // Check if user already exists
-      const existingUser = await UserModel.findOne({ email })
+      const { email, name, password } = req.body;
 
+      const existingUser = await UserController.findUserByEmail(email);
       if (existingUser) {
-        return res.status(200).json({
-          success: true,
-          message: 'User already exists.',
-          data: UserResource.toJson(existingUser)
-        })
+        return UserController.sendUserExistsResponse(res, existingUser);
       }
 
-      // Create a new user
-      const otp = genrerateOTP()
-      console.log(otp)
-      const newUser = new UserModel({ name, email, password, otp })
-      await newUser.save()
+      const otp = genrerateOTP();
+      const newUser = await UserController.createUser({ name, email, password, otp });
 
-      // Send Email with OTP
-      await sendMail({
-        to: email,
-        subject: 'Verify Your Email',
-        html: `
-        <h3>Hi ${name},</h3>
-        <p>Thank you for signing up. Your OTP is:</p>
-        <h2>${otp}</h2>
-        <p>Please use it to verify your account.</p>
-      `
-      })
+      await UserController.sendOtpEmail({ email, name, otp });
 
-      res.status(201).json({
-        success: true,
-        message: 'User created successfully.',
-        data: UserResource.toJson(newUser)
-      })
+      UserController.sendSuccessResponse(res, newUser);
     } catch (error) {
-      next(error) // let the global error handler catch it
+      next(error);
     }
+  }
+
+  private static async findUserByEmail(email: string) {
+    return UserModel.findOne({ email });
+  }
+
+  private static sendUserExistsResponse(res: Response, user: any) {
+    return res.status(200).json({
+      success: true,
+      message: 'User already exists.',
+      data: UserResource.toJson(user),
+    });
+  }
+
+  private static async createUser({ name, email, password, otp }: { name: string; email: string; password: string; otp:number }) {
+    const user = new UserModel({ name, email, password, otp });
+    return user.save();
+  }
+
+  private static async sendOtpEmail({ email, name, otp }: { email: string; name: string; otp: number }) {
+    const htmlContent = `
+      <h3>Hi ${name},</h3>
+      <p>Thank you for signing up. Your OTP is:</p>
+      <h2>${otp}</h2>
+      <p>Please use it to verify your account.</p>
+    `;
+    await sendMail({
+      to: email,
+      subject: 'Verify Your Email',
+      html: htmlContent,
+    });
+  }
+
+  private static sendSuccessResponse(res: Response, user: any) {
+    return res.status(201).json({
+      success: true,
+      message: 'User created successfully.',
+      data: UserResource.toJson(user),
+    });
   }
 
   static async allusers (req: Request, res: Response, next: NextFunction) {
