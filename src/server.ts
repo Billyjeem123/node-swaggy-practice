@@ -2,7 +2,7 @@ import * as express from 'express'
 import connectDB from './config/db'
 import UserRoute from './routers/UserRoute'
 import * as bodyParser from 'body-parser'
-import cors from 'cors';
+import  * as cors from 'cors';
 
 export class Server {
   public app = express()

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import UserModel from '../models/User'
-import { handleValidationErrors } from '../Utility/validate';
+import { genrerateOTP, handleValidationErrors } from '../Utility/validate';
 import { UserResource } from '../Resource/UserResource';
 
 export class UserController {
@@ -22,7 +22,8 @@ export class UserController {
       }
 
       // Create a new user
-      const newUser = new UserModel({ name, email,password })
+      const otp = genrerateOTP(6);
+      const newUser = new UserModel({ name, email,password, otp  })
       await newUser.save()
 
       res.status(201).json({

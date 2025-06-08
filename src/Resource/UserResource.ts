@@ -5,8 +5,9 @@ export class UserResource {
             type: "Users",
             id: user._id,
             attributes: {
-                name: user.name,
-                email: user.email,
+               name: user.name ?? '',
+                email: user.email ?? '',
+                is_verified: Boolean(user.is_verified ?? false),
                 created_at: new Date(user.createdAt).toLocaleDateString('en-US', {
                     month: 'short', day: '2-digit', year: 'numeric'
                 })

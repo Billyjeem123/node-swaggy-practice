@@ -17,3 +17,11 @@ export function handleValidationErrors(req: Request, res: Response): boolean {
 
     return false; // no validation errors
 }
+
+ export function genrerateOTP($length){
+    
+
+     const max = Math.pow(10, length) - 1;
+  const min = Math.pow(10, length - 1);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
