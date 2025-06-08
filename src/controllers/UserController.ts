@@ -129,6 +129,17 @@ export class UserController {
     }
   }
 
+
+
+   static async test (req: Request, res: Response, next: NextFunction) {
+    try {
+      
+      res.send(req)
+    } catch (error) {
+      next(error) // Pass error to global error handler
+    }
+  }
+
   static async updateUser (req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.params.id
