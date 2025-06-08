@@ -3,7 +3,7 @@ import UserModel from '../models/User'
 import { genrerateOTP, handleValidationErrors } from '../Utility/validate'
 import { UserResource } from '../Resource/UserResource'
 import { sendMail } from '../Utility/mail'
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 export class UserController {
   
@@ -43,8 +43,8 @@ export class UserController {
   }
 
   private static async createUser({ name, email, password, otp }: { name: string; email: string; password: string; otp:number }) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new UserModel({ name, email, hashedPassword , otp });
+    const hashedPassword = await bcrypt.hash(String(password), 10);
+    const user = new UserModel({ name, email,  password: hashedPassword , otp });
     return user.save();
   }
 
