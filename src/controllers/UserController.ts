@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import UserModel from '../models/User'
 import { genrerateOTP, handleValidationErrors } from '../Utility/validate';
 import { UserResource } from '../Resource/UserResource';
+import { sendMail } from '../Utility/mail';
 
 export class UserController {
   static async signup (req: Request, res: Response, next: NextFunction) {
@@ -25,6 +26,18 @@ export class UserController {
       const otp = genrerateOTP(6);
       const newUser = new UserModel({ name, email,password, otp  })
       await newUser.save()
+
+      // Send Email with OTP
+      await sendMail({
+      to: email,
+      subject: 'Verify Your Email',
+      html: `
+        <h3>Hi ${name},</h3>
+        <p>Thank you for signing up. Your OTP is:</p>
+        <h2>${otp}</h2>
+        <p>Please use it to verify your account.</p>
+      `
+    });
 
       res.status(201).json({
         success: true,
