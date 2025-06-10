@@ -8,14 +8,21 @@ class GlobalRequest {
     static signup() {
         return [
             (0, express_validator_1.body)('name', 'Name is required').isString(),
-            (0, express_validator_1.body)('email', 'Email is required').isEmail()
+            (0, express_validator_1.body)('email', 'Email is required')
+                .isEmail()
                 .custom((value, { req }) => {
                 if (req.body.email)
                     return true;
                 else {
                     throw new Error('Email is not available for validation');
                 }
-            }),
+            })
+        ];
+    }
+    static login() {
+        return [
+            (0, express_validator_1.body)('email').isEmail().withMessage('A valid email is required'),
+            (0, express_validator_1.body)('password').isString().withMessage('Password is required'),
         ];
     }
 }

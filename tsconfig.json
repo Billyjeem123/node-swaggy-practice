@@ -18,11 +18,15 @@
       ]
     },
     "files": [
-      "./node_modules/@types/node/index.d.ts"
+      "./node_modules/@types/node/index.d.ts",
+      "types.d.ts"
     ],
+     "typeRoots": ["./node_modules/@types", "./types"],
     "include": [
       "src/**/*.ts",
-      "package.json"
+      "package.json",
+      "types",
+      "types.d.ts"
     ],
     "exclude": [
       "node_modules"

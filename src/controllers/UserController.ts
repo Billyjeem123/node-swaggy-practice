@@ -130,15 +130,22 @@ export class UserController {
   }
 
 
+static async myProfile(req: Request, res: Response, next: NextFunction) {
+  try {
+    const auth = (req as any).user; // OR cast req with custom type if using TypeScript
 
-   static async test (req: Request, res: Response, next: NextFunction) {
-    try {
-      
-      res.send(req)
-    } catch (error) {
-      next(error) // Pass error to global error handler
-    }
+    const user = await UserModel.findById(auth.userId); // <-- You need to await this!
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile fetched successfully.',
+      data: UserResource.toJson(user),
+    });
+  } catch (error) {
+    next(error);
   }
+}
+
 
   static async updateUser (req: Request, res: Response, next: NextFunction) {
     try {

@@ -13,7 +13,7 @@ export class UserRouter {
   getRoutes () {
      this.router.post('/signup', ...GlobalRequest.signup(), UserController.signup.bind(UserController))
        this.router.post('/login', ...GlobalRequest.login(), UserController.login.bind(UserController))
-       this.router.get('/all', authenticateJWT, UserController.test.bind(UserController))
+       this.router.get('/my-profile', authenticateJWT, UserController.myProfile.bind(UserController))
      this.router.get('/all0', authenticateJWT, UserController.allusers.bind(UserController))
      this.router.put('/update/:id', UserController.updateUser.bind(UserController));   // Update user by ID
      this.router.delete('/delete/:id', UserController.deleteUser.bind(UserController)); // Delete user by ID

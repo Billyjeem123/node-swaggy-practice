@@ -11,36 +11,109 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const User_1 = require("../models/User");
-const express_validator_1 = require("express-validator");
+const validate_1 = require("../Utility/validate");
+const UserResource_1 = require("../Resource/UserResource");
+const mail_1 = require("../Utility/mail");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const environment_1 = require("../enviroments/environment");
 class UserController {
     static signup(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const errors = (0, express_validator_1.validationResult)(req);
-                if (!errors.isEmpty()) {
-                    return res.status(400).json({ success: false, errors: errors.array() });
-                }
+                if ((0, validate_1.handleValidationErrors)(req, res))
+                    return;
                 const { email, name, password } = req.body;
-                // Check if user already exists
-                const existingUser = yield User_1.default.findOne({ email });
+                const existingUser = yield UserController.findUserByEmail(email);
                 if (existingUser) {
-                    return res.status(200).json({
-                        success: true,
-                        message: 'User already exists.',
-                        data: existingUser
+                    return UserController.sendUserExistsResponse(res, existingUser);
+                }
+                const otp = (0, validate_1.genrerateOTP)();
+                const newUser = yield UserController.createUser({ name, email, password, otp });
+                yield UserController.sendOtpEmail({ email, name, otp });
+                UserController.sendSuccessResponse(res, newUser);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    static findUserByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return User_1.default.findOne({ email });
+        });
+    }
+    static sendUserExistsResponse(res, user) {
+        return res.status(200).json({
+            success: true,
+            message: 'User already exists.',
+            data: UserResource_1.UserResource.toJson(user),
+        });
+    }
+    static createUser(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ name, email, password, otp }) {
+            const hashedPassword = yield bcrypt.hash(String(password), 10);
+            const user = new User_1.default({ name, email, password: hashedPassword, otp });
+            return user.save();
+        });
+    }
+    static sendOtpEmail(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ email, name, otp }) {
+            const htmlContent = `
+      <h3>Hi ${name},</h3>
+      <p>Thank you for signing up. Your OTP is:</p>
+      <h2>${otp}</h2>
+      <p>Please use it to verify your account.</p>
+    `;
+            yield (0, mail_1.sendMail)({
+                to: email,
+                subject: 'Verify Your Email',
+                html: htmlContent,
+            });
+        });
+    }
+    static sendSuccessResponse(res, user) {
+        return res.status(201).json({
+            success: true,
+            message: 'User created successfully.',
+            data: UserResource_1.UserResource.toJson(user),
+        });
+    }
+    static login(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if ((0, validate_1.handleValidationErrors)(req, res))
+                    return;
+                const { email, password } = req.body;
+                const user = yield User_1.default.findOne({ email });
+                if (!user) {
+                    return res.status(401).json({
+                        success: false,
+                        message: 'Invalid credentials. User not found.',
                     });
                 }
-                // Create a new user
-                const newUser = new User_1.default({ name, email, password });
-                yield newUser.save();
-                res.status(201).json({
+                const isPasswordValid = yield bcrypt.compare(password, user.password);
+                if (!isPasswordValid) {
+                    return res.status(401).json({
+                        success: false,
+                        message: 'Invalid credentials. Password mismatch.',
+                    });
+                }
+                const token = jwt.sign({
+                    userId: user._id,
+                    email: user.email,
+                }, (0, environment_1.getEnvironmentVariables)().jwt_secret_key, { expiresIn: '7d' });
+                return res.status(200).json({
                     success: true,
-                    message: 'User created successfully.',
-                    data: newUser
+                    message: 'Login successful.',
+                    data: {
+                        user: UserResource_1.UserResource.toJson(user),
+                        token,
+                    },
                 });
             }
             catch (error) {
-                next(error); // let the global error handler catch it
+                next(error);
             }
         });
     }
@@ -53,6 +126,17 @@ class UserController {
                     message: 'All users fetched successfully.',
                     data: users
                 });
+            }
+            catch (error) {
+                next(error); // Pass error to global error handler
+            }
+        });
+    }
+    static test(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // const user = req.user;
+                // console.log(user)
             }
             catch (error) {
                 next(error); // Pass error to global error handler

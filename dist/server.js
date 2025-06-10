@@ -5,6 +5,7 @@ const express = require("express");
 const db_1 = require("./config/db");
 const UserRoute_1 = require("./routers/UserRoute");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 class Server {
     constructor() {
         this.app = express();
@@ -15,6 +16,7 @@ class Server {
     }
     setConfigs() {
         (0, db_1.default)();
+        this.allowCors();
         this.configureBodyParser();
     }
     setRoutes() {
@@ -23,6 +25,9 @@ class Server {
     configureBodyParser() {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(bodyParser.json());
+    }
+    allowCors() {
+        this.app.use(cors());
     }
     error404Handler() {
         this.app.use((req, res) => {

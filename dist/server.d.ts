@@ -4,6 +4,7 @@ export declare class Server {
     setConfigs(): void;
     setRoutes(): void;
     configureBodyParser(): void;
+    allowCors(): void;
     error404Handler(): void;
     handleErrors(): void;
 }
