@@ -3,6 +3,7 @@ import { handleValidationErrors } from '../Utility/validate'
 import { UserResource } from '../Resource/UserResource'
 import { sendMail } from '../Utility/mail'
 import BannerModel from '../models/Banner'
+import { BannerResource } from '../Resource/BannerResource'
 
 export class BannerController {
   static async createBanner (req: Request, res: Response, next: NextFunction) {
@@ -27,7 +28,7 @@ export class BannerController {
         message: 'Banner created successfully',
         data: {
           name,
-          file: bannerPath
+          file:  BannerResource.toJson(banner)
         }
       })
     } catch (error) {
