@@ -26,6 +26,35 @@ export class GlobalRequest {
       body('password').isString().withMessage('Password is required'),
     ];
   }
+
+  static createRestaurant() {
+    return [
+      body('name')
+        .notEmpty()
+        .withMessage('Restaurant name is required'),
+
+      body('city')
+        .isMongoId()
+        .withMessage('A valid city ID is required'),
+
+      body('user_id')
+        .isMongoId()
+        .withMessage('A valid user ID is required'),
+
+      body('address')
+        .notEmpty()
+        .withMessage('Address is required'),
+    ];
+  }
+
+  static createCategory() {
+    return [
+      body('name')
+        .notEmpty()
+        .withMessage('Restaurant name is required'),
+     
+    ];
+  }
 }
 
 // 1️⃣ body('name', 'Name is required').isString()

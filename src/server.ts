@@ -4,6 +4,7 @@ import UserRoute from './routers/UserRoute'
 import * as bodyParser from 'body-parser'
 import * as cors from 'cors'
 import BannerRoute from './routers/BannerRoute'
+import CategoryRoute from './routers/CategoryRoute'
 
 export class Server {
   public app = express()
@@ -24,6 +25,7 @@ export class Server {
   setRoutes () {
     this.app.use('/api/user', UserRoute) //middleware to build router for routes
     this.app.use('/api/banner', BannerRoute) //middleware to build banner for routes
+      this.app.use('/api/category', CategoryRoute) //middleware to build banner for routes
   }
 
   configureBodyParser () {
