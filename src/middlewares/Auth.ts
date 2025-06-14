@@ -3,7 +3,7 @@ import { getEnvironmentVariables } from "../enviroments/environment";
 
 export const authenticateJWT = (req, res, next) => {
   const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-  console.log("🔥 JWT middleware reached. Header:", authHeader);
+  // console.log("🔥 JWT middleware reached. Header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized - Missing token" });

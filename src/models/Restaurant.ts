@@ -3,7 +3,6 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IRestaurant extends Document {
   name: string;
-  city: Types.ObjectId;
   city_id?: Types.ObjectId; // optional if used
   user_id: Types.ObjectId;
 }

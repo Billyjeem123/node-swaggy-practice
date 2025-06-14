@@ -33,17 +33,10 @@ export class GlobalRequest {
         .notEmpty()
         .withMessage('Restaurant name is required'),
 
-      body('city')
+      body('city_id')
         .isMongoId()
         .withMessage('A valid city ID is required'),
-
-      body('user_id')
-        .isMongoId()
-        .withMessage('A valid user ID is required'),
-
-      body('address')
-        .notEmpty()
-        .withMessage('Address is required'),
+     
     ];
   }
 
