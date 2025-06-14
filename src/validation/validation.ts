@@ -48,6 +48,21 @@ export class GlobalRequest {
      
     ];
   }
+
+  static updateMyRestaurant() {
+  return [
+    body('name')
+      .optional()
+      .notEmpty()
+      .withMessage('Restaurant name cannot be empty'),
+
+    body('city_id')
+      .optional()
+      .isMongoId()
+      .withMessage('City ID must be a valid Mongo ID'),
+  ];
+}
+
 }
 
 // 1️⃣ body('name', 'Name is required').isString()
