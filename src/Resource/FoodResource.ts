@@ -11,6 +11,14 @@ export class FoodResource {
           year: 'numeric',
         }),
       },
+      restaurant: {
+        restaurant: food.restaurant_id
+          ? {
+              id: food.restaurant_id._id,
+              name: food.restaurant_id.name,
+            }
+          : null,
+      },
     };
   }
 

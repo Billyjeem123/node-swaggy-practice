@@ -30,7 +30,7 @@ export class Server {
     this.app.use('/api/category', CategoryRoute) //middleware to build banner for routes
     this.app.use('/api/cities', CityRoute) //middleware to build cities for routes
     this.app.use('/api/restaurant', RestaurantRoute) //middleware to build restaurant  for routes
-        this.app.use('/api/food', FoodRoute) //middleware to build food  for routes
+    this.app.use('/api/food', FoodRoute) //middleware to build food  for routes
   }
 
   configureBodyParser () {
