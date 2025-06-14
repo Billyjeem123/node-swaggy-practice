@@ -7,7 +7,7 @@ export class CityController {
 
      static async allRecords (req: Request, res: Response, next: NextFunction) {
         try {
-          const cities = await CityModel.find() // Fetches all users from DB
+          const cities = await CityModel.find() // Fetches all cities from DB
     
           return res.status(200).json({
             success: true,

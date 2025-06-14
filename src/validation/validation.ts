@@ -49,6 +49,14 @@ export class GlobalRequest {
     ];
   }
 
+  static createFood() {
+  return [
+    body('name').notEmpty().withMessage('Food name is required'),
+    body('restaurant_id').isMongoId().withMessage('A valid restaurant ID is required'),
+  ];
+}
+
+
   static updateMyRestaurant() {
   return [
     body('name')
