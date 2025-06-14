@@ -6,7 +6,7 @@ import * as cors from 'cors'
 import BannerRoute from './routers/BannerRoute'
 import CategoryRoute from './routers/CategoryRoute'
 import CityRoute from './routers/CityRoute'
-
+import RestaurantRoute  from './routers/Restaurant'
 export class Server {
   public app = express()
 
@@ -26,8 +26,9 @@ export class Server {
   setRoutes () {
     this.app.use('/api/user', UserRoute) //middleware to build router for routes
     this.app.use('/api/banner', BannerRoute) //middleware to build banner for routes
-      this.app.use('/api/category', CategoryRoute) //middleware to build banner for routes
-          this.app.use('/api/cities', CityRoute) //middleware to build cities for routes
+    this.app.use('/api/category', CategoryRoute) //middleware to build banner for routes
+    this.app.use('/api/cities', CityRoute) //middleware to build cities for routes
+    this.app.use('/api/restaurant', RestaurantRoute) //middleware to build restaurant  for routes
   }
 
   configureBodyParser () {
