@@ -122,7 +122,7 @@ export class UserController {
       return res.status(200).json({
         success: true,
         message: 'All users fetched successfully.',
-        data: users
+        data: UserResource.collection(users)
       })
     } catch (error) {
       next(error) // Pass error to global error handler
