@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import { handleValidationErrors } from '../Utility/validate'
-import { UserResource } from '../Resource/UserResource'
-import { sendMail } from '../Utility/mail'
 import BannerModel from '../models/Banner'
 import { BannerResource } from '../Resource/BannerResource'
 
