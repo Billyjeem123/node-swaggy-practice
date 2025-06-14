@@ -4,8 +4,7 @@ export class CityResource {
       type: "cities",
       id: city._id,
       attributes: {
-        name: city.name ?? '',
-       
+        name: city.name,
         created_at: new Date(city.createdAt).toLocaleDateString('en-US', {
           month: 'short',
           day: '2-digit',
@@ -16,6 +15,6 @@ export class CityResource {
   }
 
   static collection(cities) {
-    return cities.map(city => this.toJson(cities));
+    return cities.map(city => this.toJson(city));
   }
 }

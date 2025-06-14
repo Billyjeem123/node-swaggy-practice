@@ -9,7 +9,7 @@ export class BannerRoute {
   }
 
   getRoutes () {
-     this.router.post('/all-records', CityController.allRecords.bind(CityController))
+     this.router.get('/all', CityController.allRecords.bind(CityController))
   }
 }
 

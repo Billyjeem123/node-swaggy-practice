@@ -12,7 +12,7 @@ export class CityController {
           return res.status(200).json({
             success: true,
             message: 'All cities fetched successfully.',
-            data: CityResource.toJson(cities)
+            data: CityResource.collection(cities)
           })
         } catch (error) {
           next(error) // Pass error to global error handler
