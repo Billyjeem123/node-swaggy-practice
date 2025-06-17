@@ -15,15 +15,12 @@ export class RestaurantController {
       const { name, city_id } = req.body
       const auth = (req as any).user // OR cast req with custom type if using TypeScript
 
-      const newRestaurant = await RestaurantController.store({
-        name,
-        city_id,
-        user_id: auth.userId
-      })
-
+     
       const alreadyExists = await RestaurantModel.findOne({
         user_id: auth.userId
       })
+
+      console.log(alreadyExists)
 
       if (alreadyExists) {
         return res.status(400).json({
@@ -33,6 +30,13 @@ export class RestaurantController {
           data: RestaurantResource.toJson(alreadyExists)
         })
       }
+
+       const newRestaurant = await RestaurantController.store({
+        name,
+        city_id,
+        user_id: auth.userId
+      })
+
 
       return RestaurantController.sendSuccessResponse(res, newRestaurant)
     } catch (error) {

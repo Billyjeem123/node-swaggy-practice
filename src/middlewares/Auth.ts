@@ -21,6 +21,34 @@ export const authenticateJWT = (req, res, next) => {
   }
 };
 
+export const authenticateMerchant = (req, res, next) => {
+  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized - Missing token' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, getEnvironmentVariables().jwt_secret_key);
+
+    // Set user on request
+    req.user = decoded;
+
+    // Check if user has 'merchant' role
+    if (!req.user.role || req.user.role !== 'merchant') {
+      return res.status(403).json({ status : false, message: 'Access denied - Not a merchant', data:[] });
+    }
+
+    next();
+  } catch (err) {
+    console.error('❌ JWT Error:', err.message);
+    return res.status(403).json({  status : false,message: 'Invalid or expired token', data:[] });
+  }
+};
+
+
 
 
 

@@ -3,9 +3,8 @@ import connectDB from './config/db'
 import UserRoute from './routers/UserRoute'
 import * as bodyParser from 'body-parser'
 import * as cors from 'cors'
-import RestaurantRoute  from './routers/Restaurant'
-import FoodRoute from './routers/FoodRoute'
 import SuperAdminRoute from './routers/SuperAdminRoute'
+import MerchantRoute   from './routers/MerchantRoutes'
 export class Server {
   public app = express()
 
@@ -24,9 +23,8 @@ export class Server {
 
   setRoutes () {
     this.app.use('/api/super-admin', SuperAdminRoute);
-    this.app.use('/api/user', UserRoute) //middleware to build router for routes
-    this.app.use('/api/restaurant', RestaurantRoute) //middleware to build restaurant  for routes
-    this.app.use('/api/food', FoodRoute) //middleware to build food  for routes
+    this.app.use('/api/merchant', MerchantRoute);
+    this.app.use('/api/user', UserRoute) 
   }
 
   configureBodyParser () {

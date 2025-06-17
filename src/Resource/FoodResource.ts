@@ -1,3 +1,5 @@
+import { formatCurrency } from "../Utility/formatter";
+
 export class FoodResource {
   static toJson(food) {
     return {
@@ -5,6 +7,7 @@ export class FoodResource {
       id: food._id,
       attributes: {
         name: food.name,
+          price: formatCurrency(food.price), // reusable function
         created_at: new Date(food.createdAt).toLocaleDateString('en-US', {
           month: 'short',
           day: '2-digit',
@@ -22,6 +25,7 @@ export class FoodResource {
     };
   }
 
+  
   static collection(foods) {
     return foods.map(food => this.toJson(food));
   }

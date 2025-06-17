@@ -73,6 +73,7 @@ export class UserController {
   }
 
 
+
    static async login(req: Request, res: Response, next: NextFunction) {
     try {
       if (handleValidationErrors(req, res)) return;
@@ -97,6 +98,7 @@ export class UserController {
         {
           userId: user._id,
           email: user.email,
+          role: user.role
         },
         getEnvironmentVariables().jwt_secret_key,
         { expiresIn: '7d' }

@@ -5,7 +5,7 @@ import { FoodModel } from '../models/Food'
 export class FoodController {
   static async createFood (req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, restaurant_id } = req.body
+      const { name, restaurant_id, price } = req.body
 
       // 2. Check for duplicate food by name within the same restaurant
       const alreadyExists = await FoodModel.findOne({
@@ -24,6 +24,7 @@ export class FoodController {
       // 3. Create and return the new food item
       const food = await FoodController.store({
         name,
+        price,
         restaurant_id
       })
 
@@ -35,15 +36,15 @@ export class FoodController {
 
   private static async store ({
     name,
+    price,
     restaurant_id
   }: {
     name: string
+    price:number,
     restaurant_id: string
   }) {
-    const food = new FoodModel({ name, restaurant_id })
-
+    const food = new FoodModel({ name, price, restaurant_id })
     const savedFood = await food.save()
-
     return FoodModel.findById(savedFood._id).populate('restaurant_id')
   }
 
@@ -67,6 +68,7 @@ export class FoodController {
       });
     }
 
+    
     const foods = await FoodModel.find({ restaurant_id })
       .populate('restaurant_id'); // optional, to load full restaurant info
 
