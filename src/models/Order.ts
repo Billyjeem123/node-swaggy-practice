@@ -1,10 +1,10 @@
-// models/Restaurant.ts
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose'
 
 export interface IOrder extends Document {
-   user_id: mongoose.Types.ObjectId;
-  food_id: mongoose.Types.ObjectId;
-  amount: number;
+  user_id: mongoose.Types.ObjectId
+  restaurant_id: mongoose.Types.ObjectId
+  food_id: mongoose.Types.ObjectId
+  amount: number
 }
 
 const orderSchema: Schema = new Schema(
@@ -12,26 +12,26 @@ const orderSchema: Schema = new Schema(
     user_id: {
       type: Schema.Types.ObjectId,
       ref: 'users',
-      required: true,
+      required: true
     },
     food_id: {
       type: Schema.Types.ObjectId,
       ref: 'foods',
-      required: true,
+      required: true
     },
-     restaurant_id: {
+    restaurant_id: {
       type: Schema.Types.ObjectId,
       ref: 'restaurants',
-      required: true,
+      required: true
     },
     amount: {
       type: Number,
       required: true,
-      min: 0,
-    },
+      min: 0
+    }
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt fields
+    timestamps: true // Adds createdAt and updatedAt fields
   }
-);
-export const OrderModel = mongoose.model<IOrder>('orders', orderSchema);
+)
+export const OrderModel = mongoose.model<IOrder>('orders', orderSchema)
