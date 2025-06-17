@@ -7,6 +7,7 @@ export class UserResource {
             attributes: {
                name: user.name ?? '',
                 email: user.email ?? '',
+                  role: user.role ?? '',
                 is_verified: Boolean(user.is_verified ?? false),
                 created_at: new Date(user.createdAt).toLocaleDateString('en-US', {
                     month: 'short', day: '2-digit', year: 'numeric'
