@@ -5,6 +5,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  role?: string
 }
 
 // Define the Mongoose schema
@@ -25,7 +26,7 @@ const UserSchema: Schema = new Schema({
  role: {
   type: String,
   required: true,
-  default: 'user' // <-- Default value here
+  default: 'customer' // <-- Default value here
 },
 
   otp: {

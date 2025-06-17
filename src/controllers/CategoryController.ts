@@ -10,32 +10,27 @@ export class CategoryController {
 
       const { name } = req.body
       const category = new CategoryModel({
-        name,
-        user_id: req.user.userId
+        name
       })
-      await category.save()
-
-      // Equivalent to Laravel's ->load('user')
-      const populatedCategory = await CategoryModel.findById(
-        category._id
-      ).populate('user_id')
+      const saved_category = await category.save()
 
       return res.status(201).json({
         success: true,
         message: 'Category created successfully',
-        data: CategoryResource.toJson(populatedCategory)
+        data: CategoryResource.toJson(saved_category)
       })
     } catch (error) {
       next(error)
     }
   }
 
-static async allcategories(req: Request, res: Response, next: NextFunction) {
+ 
+  static async allcategories(req: Request, res: Response, next: NextFunction) {
   try {
     const { id } = req.params;
 
     if (id) {
-      const category = await CategoryModel.findById(id).populate('user_id');
+      const category = await CategoryModel.findById(id);
 
       if (!category) {
         return res.status(404).json({
@@ -52,7 +47,7 @@ static async allcategories(req: Request, res: Response, next: NextFunction) {
       });
     }
 
-    const categories = await CategoryModel.find({ user_id: req.user.userId }).populate('user_id');
+    const categories = await CategoryModel.find();
 
     return res.status(200).json({
       success: true,

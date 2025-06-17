@@ -14,7 +14,7 @@ export class UserController {
     try {
       if (handleValidationErrors(req, res)) return;
 
-      const { email, name, password } = req.body;
+      const { email, name, password, role } = req.body;
 
       const existingUser = await UserController.findUserByEmail(email);
       if (existingUser) {
@@ -22,7 +22,7 @@ export class UserController {
       }
 
       const otp = genrerateOTP();
-      const newUser = await UserController.createUser({ name, email, password, otp });
+      const newUser = await UserController.createUser({ name, email, password, otp, role });
 
       await UserController.sendOtpEmail({ email, name, otp });
 
@@ -44,9 +44,9 @@ export class UserController {
     });
   }
 
-  private static async createUser({ name, email, password, otp }: { name: string; email: string; password: string; otp:number }) {
+  private static async createUser({ name, email, password, otp, role }: { name: string; email: string; password: string; otp:number, role:string }) {
     const hashedPassword = await bcrypt.hash(String(password), 10);
-    const user = new UserModel({ name, email,  password: hashedPassword , otp });
+    const user = new UserModel({ name, email,  password: hashedPassword , otp, role});
     return user.save();
   }
 

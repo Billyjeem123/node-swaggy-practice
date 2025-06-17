@@ -9,6 +9,7 @@ export class GlobalRequest {
   static signup () {
     return [
       body('name', 'Name is required').isString(),
+      body('role', 'Role is required').isString(),
       body('email', 'Email is required')
         .isEmail()
         .custom((value, { req }) => {
