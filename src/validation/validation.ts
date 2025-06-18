@@ -41,6 +41,24 @@ export class GlobalRequest {
     ];
   }
 
+    static createOrder() {
+        return [
+            body('food_id')
+                .isMongoId()
+                .withMessage('A valid city ID is required'),
+
+            body('restaurant_id')
+                .isMongoId()
+                .withMessage('A valid city ID is required'),
+
+            body('amount')
+                .notEmpty()
+                .withMessage('Amount  is required')
+
+
+        ];
+    }
+
   static createCategory() {
     return [
       body('name')

@@ -14,10 +14,18 @@ export class OrderRoute {
 this.router.post(
       '/create',
       authenticateJWT,
-      GlobalRequest.createFood(),
-      OrderController.createFood.bind(OrderController)
+      GlobalRequest.createOrder(),
+      OrderController.createOrder.bind(OrderController)
     )
-    this.router.get(
+
+     this.router.get(
+         '/customer-order',
+         authenticateJWT,
+         OrderController.CustomerOrder.bind(OrderController)
+     )
+
+
+     this.router.get(
       '/my-order',
       authenticateJWT,
       OrderController.allRecords.bind(OrderController)

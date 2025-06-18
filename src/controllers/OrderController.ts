@@ -4,7 +4,9 @@ import {OrderResource} from "../Resource/OrderResource";
 export class OrderController {
   static async createOrder (req: Request, res: Response, next: NextFunction) {
     try {
-      const { user_id, restaurant_id, food_id,  amount } = req.body
+      const { restaurant_id, food_id, amount } = req.body
+
+      const user_id = req.user.userId;
 
       // 2. Check for duplicate food by name within the same restaurant
       const alreadyExists = await OrderModel.findOne({
@@ -154,5 +156,23 @@ static async updateFood(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+
+
+  static async CustomerOrder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user_id = req.user.userId;
+
+      const orders = await OrderModel.find({ user_id })
+          .populate('restaurant_id food_id user_id');
+
+      return res.status(200).json({
+        success: true,
+        message: 'Customer orders fetched successfully',
+        data: OrderResource.collection(orders)
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
 }
