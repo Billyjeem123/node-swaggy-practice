@@ -6,6 +6,7 @@ import * as cors from 'cors'
 import SuperAdminRoute from './routers/SuperAdminRoute'
 import MerchantRoute   from './routers/MerchantRoutes'
 import OrderRoute from './routers/OrderRoute'
+import PaymentRoute from "./routers/PaymentRoute";
 export class Server {
   public app = express()
 
@@ -26,7 +27,8 @@ export class Server {
     this.app.use('/api/super-admin', SuperAdminRoute);
     this.app.use('/api/merchant', MerchantRoute);
     this.app.use('/api/order',  OrderRoute) 
-    this.app.use('/api/user', UserRoute) 
+    this.app.use('/api/user', UserRoute)
+    this.app.use('/api/payment', PaymentRoute)
   }
 
   configureBodyParser () {
