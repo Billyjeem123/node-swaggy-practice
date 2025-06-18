@@ -1,31 +1,32 @@
 import { Request, Response, NextFunction } from 'express'
-import { FoodResource } from '../Resource/FoodResource'
-import { FoodModel } from '../models/Food'
-
+import {OrderModel} from "../models/Order";
+import {OrderResource} from "../Resource/OrderResource";
 export class OrderController {
-  static async createFood (req: Request, res: Response, next: NextFunction) {
+  static async createOrder (req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, restaurant_id, price } = req.body
+      const { user_id, restaurant_id, food_id,  amount } = req.body
 
       // 2. Check for duplicate food by name within the same restaurant
-      const alreadyExists = await FoodModel.findOne({
-        name: name,
+      const alreadyExists = await OrderModel.findOne({
+         food_id: food_id,
+         user_id: user_id,
         restaurant_id: restaurant_id // ensure it checks under same restaurant
       })
 
       if (alreadyExists) {
         return res.status(400).json({
           success: false,
-          message: 'Food already exists for this restaurant.',
-          data: FoodResource.toJson(alreadyExists)
+          message: 'Order already exists in your cart',
+          data: OrderResource.toJson(alreadyExists)
         })
       }
 
       // 3. Create and return the new food item
       const food = await OrderController.store({
-        name,
-        price,
-        restaurant_id
+        food_id: food_id,
+        user_id: user_id,
+        restaurant_id: restaurant_id,
+        amount 
       })
 
       return OrderController.sendSuccessResponse(res, food)
@@ -35,24 +36,26 @@ export class OrderController {
   }
 
   private static async store ({
-    name,
-    price,
-    restaurant_id
-  }: {
-    name: string
-    price:number,
+  food_id: food_id,
+  user_id: user_id,
+  restaurant_id: restaurant_id,
+  amount
+}: {
+    food_id: string
+    user_id:string,
     restaurant_id: string
+    amount:number
   }) {
-    const food = new FoodModel({ name, price, restaurant_id })
-    const savedFood = await food.save()
-    return FoodModel.findById(savedFood._id).populate('restaurant_id')
+    const order = new OrderModel({ food_id, user_id, restaurant_id, amount })
+    const savedOrder = await order.save()
+    return OrderModel.findById(savedOrder._id).populate('restaurant_id food_id  user_id')
   }
 
   private static sendSuccessResponse (res: Response, restaurant: any) {
     return res.status(201).json({
       success: true,
-      message: 'Food item created successfully.',
-      data: FoodResource.toJson(restaurant)
+      message: 'Order item created successfully.',
+      data: OrderResource.toJson(restaurant)
     })
   }
 
@@ -69,13 +72,13 @@ export class OrderController {
     }
 
     
-    const foods = await FoodModel.find({ restaurant_id })
+    const foods = await OrderModel.find({ restaurant_id })
       .populate('restaurant_id'); // optional, to load full restaurant info
 
     return res.status(200).json({
       success: true,
       message: 'All food items fetched successfully.',
-      data: FoodResource.collection(foods)
+      data: OrderResource.collection(foods)
     });
   } catch (error) {
     next(error);
@@ -94,7 +97,7 @@ static async deleteFood(req: Request, res: Response, next: NextFunction) {
       });
     }
 
-    const deleted = await FoodModel.findByIdAndDelete(id);
+    const deleted = await OrderModel.findByIdAndDelete(id);
 
     if (!deleted) {
       return res.status(404).json({
@@ -127,7 +130,7 @@ static async updateFood(req: Request, res: Response, next: NextFunction) {
       });
     }
 
-    const updatedFood = await FoodModel.findByIdAndUpdate(
+    const updatedFood = await OrderModel.findByIdAndUpdate(
       id,
       { name, restaurant_id },
       { new: true } // return the updated document
@@ -144,7 +147,7 @@ static async updateFood(req: Request, res: Response, next: NextFunction) {
     return res.status(200).json({
       success: true,
       message: 'Food item updated successfully.',
-      data: FoodResource.toJson(updatedFood),
+      data: OrderResource.toJson(updatedFood),
     });
   } catch (error) {
     next(error);
