@@ -2,17 +2,17 @@ import * as nodemailer from 'nodemailer';
 
 export async function sendMail({ to, subject, html }) {
   const transporter = nodemailer.createTransport({
-    host: 'spadeals.com.ng',
+    host: 'sendtruly.com',
     port: 465,
     secure: true,
     auth: {
-      user: 'info@spadeals.com.ng',
-    pass: 'vX8)6mZQBj)8s1'
+      user: 'no-reply@sendtruly.com',
+    pass: 'w?92EJXuXpZt'
     }
   });
 
   await transporter.sendMail({
-    from: '"Your App Name" <info@spadeals.com.ng>',
+    from: '"Your App Name" <no-reply@sendtruly.com>',
     to,
     subject,
     html

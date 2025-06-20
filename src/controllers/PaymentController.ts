@@ -5,6 +5,8 @@ import { PaymentModel } from '../models/Payment'
 import { PaymentResource } from '../Resource/PaymentResource'
 import { getEnvironmentVariables } from '../enviroments/environment'
 import logger from '../Utility/logger'
+import UserModel from '../models/User'
+import { sendMail } from '../Utility/mail'
 
 export class PaymentController {
   static async recordTransaction (
@@ -85,7 +87,8 @@ export class PaymentController {
         reference,
         callback_url: 'http://localhost:3000/api/payment/call-back', // 👈 your local callback
         metadata: {
-          user_id:  user.userId
+          user_id: user.userId,
+          
         }
       },
       {
@@ -119,43 +122,112 @@ export class PaymentController {
     })
   }
 
- public static async paymentCallBack(req: Request, res: Response) {
-  const { reference } = req.query;
+  public static async paymentCallBack (req: Request, res: Response) {
+    const { reference } = req.query
 
-  if (!reference) {
-    return res.status(400).json({
-      success: false,
-      message: 'Payment reference is required.',
-    });
+    if (!reference || typeof reference !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment reference is required.'
+      })
+    }
+
+    try {
+      // 1. Verify with Paystack
+      const paymentData = await this.verifyPaymentTransaction(reference)
+
+      logger.info(`Payment verification data: ${JSON.stringify(paymentData)}`)
+
+      // 2. Check if successful
+      if (paymentData.status === 'success') {
+        // 3. Update the local transaction record
+        const payment = await PaymentModel.findOneAndUpdate(
+          { transaction_ref: reference },
+          { status: 'success' },
+          { new: true } // return the updated document
+        )
+
+        if (!payment) {
+          logger.warn(
+            `No local payment record found for reference: ${reference}`
+          )
+          return res.status(404).json({
+            success: false,
+            message: 'Payment record not found locally.'
+          })
+        }
+      }
+
+      this.sendOutNotification(reference);
+
+      // 4. Respond to Paystack webhook/callback
+      return res.status(200).json({
+        success: true,
+        message: 'Payment verified successfully',
+        data: []
+      })
+    } catch (error: any) {
+      logger.error(
+        `Verification error: ${error.response?.data || error.message}`
+      )
+      return res.status(500).json({
+        success: false,
+        message: 'Verification failed.'
+      })
+    }
   }
 
+
+
+  public static async sendOutNotification(reference: string) {
   try {
-    const paymentData = await this.verifyPaymentTransaction(reference);
-   
+    // 1. Find the payment using the reference
+    const payment = await PaymentModel.findOne({ transaction_ref: reference })
+      .populate('user_id')
 
-   logger.info(`Payment verification data: ${JSON.stringify(paymentData)}`);
+    if (!payment) {
+      throw new Error('Payment not found.');
+    }
 
+    
 
+    const user = payment.user_id as any; // Assuming populated expectanything
+    const name = user.name || 'User';
+    // const email = user.email;
+    const email = "billyhadiattaofeeq@gmail.com";
 
+    if (!email) {
+      throw new Error('User email not found.');
+    }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Payment verified successfully',
-      data: paymentData,
-    });
-  } catch (error: any) {
-    console.error('Verification error:', error.response?.data || error.message);
-    return res.status(500).json({
-      success: false,
-      message: 'Verification failed.',
-    });
+    // // 2. Send transaction success notification
+    await this.sendTransactionSuccessful({ name, email });
+
+     console.log('Notification sent successfully.');
+  } catch (error) {
+    console.error('Failed to send transaction notification:', error.message);
   }
 }
 
+// ✅ Private method to send email
+private static async sendTransactionSuccessful({ name, email }: { name: string; email: string }) {
+  const htmlContent = `
+    <h3>Hi ${name},</h3>
+    <p>Transaction successful. The merchant has been notified.</p>
+    <h2>Order Status: Successful</h2>
+  `;
 
-  private static async verifyPaymentTransaction (reference) {
+  await sendMail({
+    to: email,
+    subject: 'Transaction Successful',
+    html: htmlContent,
+  });
+}
+
+
+  private static async verifyPaymentTransaction (transaction_ref) {
     const response = await axios.get(
-      `https://api.paystack.co/transaction/verify/${reference}`,
+      `https://api.paystack.co/transaction/verify/${transaction_ref}`,
       {
         headers: {
           Authorization: `Bearer ${
@@ -168,4 +240,6 @@ export class PaymentController {
 
     return response.data.data // This includes payment status, amount, customer, etc.
   }
+
+
 }
