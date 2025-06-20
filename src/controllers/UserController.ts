@@ -6,6 +6,7 @@ import { sendMail } from '../Utility/mail'
 import * as bcrypt from 'bcrypt';
 import  * as jwt from 'jsonwebtoken';
 import { getEnvironmentVariables } from '../enviroments/environment'
+import { paginate } from '../Utility/paginate'
 
 export class UserController {
   
@@ -117,20 +118,25 @@ export class UserController {
     }
   }
 
-  static async allusers (req: Request, res: Response, next: NextFunction) {
+ 
+   static async allusers(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await UserModel.find() // Fetches all users from DB
+      const query = UserModel.find(); 
+
+      const result = await paginate(query, req);
 
       return res.status(200).json({
         success: true,
         message: 'All users fetched successfully.',
-        data: UserResource.collection(users)
-      })
+        data: {
+          data: UserResource.collection(result.data),
+          pagination: result.pagination
+        }
+      });
     } catch (error) {
-      next(error) // Pass error to global error handler
+      next(error);
     }
   }
-
 
 static async myProfile(req: Request, res: Response, next: NextFunction) {
   try {
