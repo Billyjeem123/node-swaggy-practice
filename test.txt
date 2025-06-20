@@ -1,47 +1,11 @@
-lnfbvgwEVCHJEWB
+What the build script does:
+bash"build": "rimraf dist && tsc"
 
+rimraf dist - Cleans the old build folder
+tsc - Compiles TypeScript to JavaScript in the dist folder
 
+After running npm run build:
 
-
-async function readFileAsync() {
-  try {
-    const data = await fs.readFile('test.txt', 'utf8');
-    console.log('File contents:', data);
-  } catch (error) {
-    console.error('Error reading file:', error);
-  }
-}
-
-readFileAsync();
-
-to ignore a file git: git rm -r --cached node_modules/
-
-// import * as express from "express";
-// import connectDB from './config/db';
-
-// const app = express();
-// const PORT = 3000;
-
-// app.use(express.json());
-
-// app.get('/', (req, res) => {
-//   res.send('<p>Hello from TypeScript and Express yes!</p>');
-// });
-
-// app.get('/api/user/login', (req, res) => {
-//   res.send('<p>Hello from   and Express yes!</p>');
-// });
-
-// app.post('/api/user/create', (req, res) => {
-//    const userData = req.body;
-//   res.status(200).json(userData);
-// });
-
-
-
-
-// connectDB()
-// app.listen(PORT, () => {
-//   console.log(`Server is running on http://localhost:${PORT}`);
-// });
-
+Your .ts files in src/ become .js files in dist/
+src/server.ts → dist/server.js
+The server runs from dist/server.js in production

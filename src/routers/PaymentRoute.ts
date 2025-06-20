@@ -1,17 +1,22 @@
-import { Router } from 'express'
-import { GlobalRequest } from '../validation/validation'
-import { authenticateJWT } from '../middlewares/Auth'
+import {Router} from 'express'
+import {authenticateJWT} from '../middlewares/Auth'
+import {PaymentController} from "../controllers/PaymentController";
+
 export class PaymentRoute {
     public router: Router
 
-    constructor () {
+    constructor() {
         this.router = Router()
         this.getRoutes()
     }
 
-    getRoutes(){
-        
-        
+    getRoutes() {
+
+        this.router.post(
+            '/create',
+            authenticateJWT,
+            PaymentController.recordTransaction.bind(PaymentController)
+        )
     }
 }
 
