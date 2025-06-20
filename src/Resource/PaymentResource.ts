@@ -7,9 +7,10 @@ export class PaymentResource {
                 user: payment.user_id?.name ?? null, // Assuming populated
                 order: payment.order_id ? {
                     id: payment.order_id._id,
-                    // Add more fields as needed
-                    reference: payment.order_id.reference ?? null,
-                    status: payment.order_id.status ?? null,
+                } : null,
+                 restaurant: payment.restaurant_id ? {
+                    id: payment.restaurant_id.name,
+                    city: payment.restaurant_id.city_id?.name ?? null, // Assuming populated
                 } : null,
                 transaction_ref: payment.transaction_ref,
                 status: payment.status,

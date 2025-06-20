@@ -5,5 +5,5 @@ import { Environment } from './environment';
 export const ProdEnvironment: Environment = {
     db_uri: 'mongodb://127.0.0.1:27017/nodeapi',
       jwt_secret_key: 'ts-node-live',
-     paystack_secret_key: 'xxxxx'
-};
+     paystack_secret_key: 'sk_test_755a02d78f2777eb99ac6ba0b69d8a729b4e1992'
+};``

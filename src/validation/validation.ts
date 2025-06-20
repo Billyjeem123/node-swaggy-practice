@@ -76,6 +76,15 @@ export class GlobalRequest {
 }
 
 
+  static createPayment() {
+  return [
+    body('restaurant_id').isMongoId().withMessage('A valid restaurant ID is required'),
+    body('order_id').isMongoId().withMessage('A valid order ID is required'),
+    body('amount').notEmpty().withMessage('Amount is required'),
+  ];
+}
+
+
   static updateMyRestaurant() {
   return [
     body('name')
