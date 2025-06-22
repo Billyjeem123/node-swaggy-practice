@@ -8,6 +8,7 @@ class GlobalRequest {
     static signup() {
         return [
             (0, express_validator_1.body)('name', 'Name is required').isString(),
+            (0, express_validator_1.body)('role', 'Role is required').isString(),
             (0, express_validator_1.body)('email', 'Email is required')
                 .isEmail()
                 .custom((value, { req }) => {
@@ -23,6 +24,61 @@ class GlobalRequest {
         return [
             (0, express_validator_1.body)('email').isEmail().withMessage('A valid email is required'),
             (0, express_validator_1.body)('password').isString().withMessage('Password is required'),
+        ];
+    }
+    static createRestaurant() {
+        return [
+            (0, express_validator_1.body)('name')
+                .notEmpty()
+                .withMessage('Restaurant name is required'),
+            (0, express_validator_1.body)('city_id')
+                .isMongoId()
+                .withMessage('A valid city ID is required'),
+        ];
+    }
+    static createOrder() {
+        return [
+            (0, express_validator_1.body)('food_id')
+                .isMongoId()
+                .withMessage('A valid city ID is required'),
+            (0, express_validator_1.body)('restaurant_id')
+                .isMongoId()
+                .withMessage('A valid city ID is required'),
+            (0, express_validator_1.body)('amount')
+                .notEmpty()
+                .withMessage('Amount  is required')
+        ];
+    }
+    static createCategory() {
+        return [
+            (0, express_validator_1.body)('name')
+                .notEmpty()
+                .withMessage('Restaurant name is required'),
+        ];
+    }
+    static createFood() {
+        return [
+            (0, express_validator_1.body)('name').notEmpty().withMessage('Food name is required'),
+            (0, express_validator_1.body)('restaurant_id').isMongoId().withMessage('A valid restaurant ID is required'),
+        ];
+    }
+    static createPayment() {
+        return [
+            (0, express_validator_1.body)('restaurant_id').isMongoId().withMessage('A valid restaurant ID is required'),
+            (0, express_validator_1.body)('order_id').isMongoId().withMessage('A valid order ID is required'),
+            (0, express_validator_1.body)('amount').notEmpty().withMessage('Amount is required'),
+        ];
+    }
+    static updateMyRestaurant() {
+        return [
+            (0, express_validator_1.body)('name')
+                .optional()
+                .notEmpty()
+                .withMessage('Restaurant name cannot be empty'),
+            (0, express_validator_1.body)('city_id')
+                .optional()
+                .isMongoId()
+                .withMessage('City ID must be a valid Mongo ID'),
         ];
     }
 }

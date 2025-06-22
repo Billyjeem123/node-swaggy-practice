@@ -17,19 +17,20 @@ const mail_1 = require("../Utility/mail");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const environment_1 = require("../enviroments/environment");
+const paginate_1 = require("../Utility/paginate");
 class UserController {
     static signup(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if ((0, validate_1.handleValidationErrors)(req, res))
                     return;
-                const { email, name, password } = req.body;
+                const { email, name, password, role } = req.body;
                 const existingUser = yield UserController.findUserByEmail(email);
                 if (existingUser) {
                     return UserController.sendUserExistsResponse(res, existingUser);
                 }
                 const otp = (0, validate_1.genrerateOTP)();
-                const newUser = yield UserController.createUser({ name, email, password, otp });
+                const newUser = yield UserController.createUser({ name, email, password, otp, role });
                 yield UserController.sendOtpEmail({ email, name, otp });
                 UserController.sendSuccessResponse(res, newUser);
             }
@@ -51,9 +52,9 @@ class UserController {
         });
     }
     static createUser(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ name, email, password, otp }) {
+        return __awaiter(this, arguments, void 0, function* ({ name, email, password, otp, role }) {
             const hashedPassword = yield bcrypt.hash(String(password), 10);
-            const user = new User_1.default({ name, email, password: hashedPassword, otp });
+            const user = new User_1.default({ name, email, password: hashedPassword, otp, role });
             return user.save();
         });
     }
@@ -102,6 +103,7 @@ class UserController {
                 const token = jwt.sign({
                     userId: user._id,
                     email: user.email,
+                    role: user.role
                 }, (0, environment_1.getEnvironmentVariables)().jwt_secret_key, { expiresIn: '7d' });
                 return res.status(200).json({
                     success: true,
@@ -120,26 +122,35 @@ class UserController {
     static allusers(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const users = yield User_1.default.find(); // Fetches all users from DB
+                const query = User_1.default.find();
+                const result = yield (0, paginate_1.paginate)(query, req);
                 return res.status(200).json({
                     success: true,
                     message: 'All users fetched successfully.',
-                    data: users
+                    data: {
+                        data: UserResource_1.UserResource.collection(result.data),
+                        pagination: result.pagination
+                    }
                 });
             }
             catch (error) {
-                next(error); // Pass error to global error handler
+                next(error);
             }
         });
     }
-    static test(req, res, next) {
+    static myProfile(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // const user = req.user;
-                // console.log(user)
+                const auth = req.user; // OR cast req with custom type if using TypeScript
+                const user = yield User_1.default.findById(auth.userId); // <-- You need to await this!
+                return res.status(200).json({
+                    success: true,
+                    message: 'Profile fetched successfully.',
+                    data: UserResource_1.UserResource.toJson(user),
+                });
             }
             catch (error) {
-                next(error); // Pass error to global error handler
+                next(error);
             }
         });
     }

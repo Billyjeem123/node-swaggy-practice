@@ -3,6 +3,7 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
+    role?: string;
 }
 declare const UserModel: mongoose.Model<IUser, {}, {}, {}, mongoose.Document<unknown, {}, IUser, {}> & IUser & Required<{
     _id: unknown;

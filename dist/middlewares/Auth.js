@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticateJWT = void 0;
+exports.authenticateMerchant = exports.authenticateJWT = void 0;
 const jwt = require("jsonwebtoken");
 const environment_1 = require("../enviroments/environment");
 const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-    console.log("🔥 JWT middleware reached. Header:", authHeader);
+    // console.log("🔥 JWT middleware reached. Header:", authHeader);
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({ message: "Unauthorized - Missing token" });
     }
@@ -21,6 +21,28 @@ const authenticateJWT = (req, res, next) => {
     }
 };
 exports.authenticateJWT = authenticateJWT;
+const authenticateMerchant = (req, res, next) => {
+    const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized - Missing token' });
+    }
+    const token = authHeader.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, (0, environment_1.getEnvironmentVariables)().jwt_secret_key);
+        // Set user on request
+        req.user = decoded;
+        // Check if user has 'merchant' role
+        if (!req.user.role || req.user.role !== 'merchant') {
+            return res.status(403).json({ status: false, message: 'Access denied - Not a merchant', data: [] });
+        }
+        next();
+    }
+    catch (err) {
+        console.error('❌ JWT Error:', err.message);
+        return res.status(403).json({ status: false, message: 'Invalid or expired token', data: [] });
+    }
+};
+exports.authenticateMerchant = authenticateMerchant;
 // - If the token is **missing** or not in the right format (`Bearer <token>`),
 //  it returns a 401 **Unauthorized** error.
 // ---

@@ -5,6 +5,7 @@ export declare class UserResource {
         attributes: {
             name: any;
             email: any;
+            role: any;
             is_verified: boolean;
             created_at: string;
         };

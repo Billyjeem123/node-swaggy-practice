@@ -6,6 +6,10 @@ const db_1 = require("./config/db");
 const UserRoute_1 = require("./routers/UserRoute");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const SuperAdminRoute_1 = require("./routers/SuperAdminRoute");
+const MerchantRoutes_1 = require("./routers/MerchantRoutes");
+const OrderRoute_1 = require("./routers/OrderRoute");
+const PaymentRoute_1 = require("./routers/PaymentRoute");
 class Server {
     constructor() {
         this.app = express();
@@ -20,7 +24,11 @@ class Server {
         this.configureBodyParser();
     }
     setRoutes() {
-        this.app.use('/api/user', UserRoute_1.default); //middleware to build router for routes
+        this.app.use('/api/super-admin', SuperAdminRoute_1.default);
+        this.app.use('/api/merchant', MerchantRoutes_1.default);
+        this.app.use('/api/order', OrderRoute_1.default);
+        this.app.use('/api/user', UserRoute_1.default);
+        this.app.use('/api/payment', PaymentRoute_1.default);
     }
     configureBodyParser() {
         this.app.use(bodyParser.urlencoded({ extended: true }));
