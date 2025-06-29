@@ -9,3 +9,5 @@ After running npm run build:
 Your .ts files in src/ become .js files in dist/
 src/server.ts → dist/server.js
 The server runs from dist/server.js in production
+
+start here
