@@ -180,6 +180,43 @@ export class OrderController {
         }
     }
 
+
+    static async MerchantPaidOrder(req: Request, res: Response, next: NextFunction) {
+        try {
+            const {restaurant_id} = req.params;
+
+            if (!restaurant_id) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'restaurant_id is required in the URL path.',
+                    data: null
+                });
+            }
+
+            const orders = await PaymentModel.find({
+                restaurant_id,
+                status: "success"
+            })
+                .populate('restaurant_id')
+                .populate('user_id')
+                .populate({
+                    path: 'order_id',
+                    populate: {
+                        path: 'food_id'
+                    }
+                });
+
+
+            return res.status(200).json({
+                success: true,
+                message: 'Payment transaction orders fetched successfully',
+                data: PaymentResource.collection(orders)
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     private static async store({
                                    food_id: food_id,
                                    user_id: user_id,

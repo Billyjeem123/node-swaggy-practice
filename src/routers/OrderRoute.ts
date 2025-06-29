@@ -32,9 +32,9 @@ export class OrderRoute {
         )
 
         this.router.get(
-            '/merchant-order',
+            '/merchant-order/:restaurant_id',
             authenticateJWT,
-            OrderController.allRecords.bind(OrderController)
+            OrderController.MerchantPaidOrder.bind(OrderController)
         )
 
 
