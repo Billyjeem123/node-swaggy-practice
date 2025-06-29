@@ -1,13 +1,25 @@
 // src/RedisClient.ts
 import {createClient, RedisClientType} from 'redis';
+import {getEnvironmentVariables} from "../enviroments/environment";
 
-export class RedisClient {
+export class Redis {
     private static client: RedisClientType;
 
-    // Initialize the Redis client (singleton)
+    // ✅ Move environment variables inside the init method or top-level scope<?php
+    private static redisHost = getEnvironmentVariables().redis_host;
+    private static redisPort = getEnvironmentVariables().redis_port;
+    private static redisPassword = null;
+
+    // ✅ Initialize the Redis client (singleton)
     public static async init(): Promise<void> {
         if (!this.client) {
-            this.client = createClient();
+            this.client = createClient({
+                socket: {
+                    host: this.redisHost,
+                    port: parseInt(String(this.redisPort), 10),
+                },
+                //password: this.redisPassword !== 'null' ? this.redisPassword : undefined,
+            });
 
             this.client.on('error', (err) => {
                 console.error('❌ Redis error:', err);
